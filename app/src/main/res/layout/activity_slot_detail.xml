@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="butchjgo.com.finalproject.SlotDetail">
+
+    <TextView
+        android:id="@+id/slotNumLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="47dp"
+        android:layout_below="@+id/spDayOfWeek"
+        android:layout_marginTop="39dp"
+        android:layout_toStartOf="@+id/spSlotNum"
+        android:paddingLeft="20dp"
+        android:text="Slot num"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/txtSubject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btnOK"
+        android:layout_below="@+id/slotNumLabel"
+        android:layout_marginTop="63dp"
+        android:ems="10"
+        android:inputType="text"
+        android:paddingLeft="20dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="39dp" />
+
+    <EditText
+        android:id="@+id/txtLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/txtSubject"
+        android:layout_below="@+id/txtSubject"
+        android:layout_marginTop="42dp"
+        android:ems="10"
+        android:inputType="text"
+        android:paddingLeft="20dp"/>
+
+    <Button
+        android:id="@+id/btnOK"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activeStatus"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp"
+        android:onClick="saveData"
+        android:text="Save" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/txtSubject"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="13dp"
+        android:text="Subject"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtLocation"
+        android:layout_alignBottom="@+id/txtLocation"
+        android:layout_alignEnd="@+id/textView3"
+        android:text="Location"
+        android:textSize="24sp" />
+
+    <Spinner
+        android:id="@+id/spDayOfWeek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp" />
+
+    <Spinner
+        android:id="@+id/spSlotNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_alignTop="@+id/slotNumLabel"
+        android:layout_marginStart="13dp"
+        android:layout_toEndOf="@+id/textView3" />
+
+    <Switch
+        android:id="@+id/activeStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/btnOK"
+        android:layout_below="@+id/txtLocation"
+        android:layout_marginTop="25dp"
+        android:text="Active" />
+
+</RelativeLayout>
