@@ -16,16 +16,25 @@ import com.google.gson.Gson;
 
 import java.time.DayOfWeek;
 
-public class SlotDetail extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class SlotDetail extends AppCompatActivity {
+
+    private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            updateView();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            return;
+        }
+    };
 
     DayOfWeek[] dayOfWeeks = DayOfWeek.values();
 
+    DetailRepository repository;
 
-    String[] test = {"abc", "def"};
-
-    SlotNum[] slotNums = SlotNum.values();
-
-    Gson gson = new Gson();
+    Integer[] slotNums = {1, 2, 3, 4, 5, 6, 7, 8};
 
     Spinner spDayOfWeek, spSlotNum;
 
@@ -34,20 +43,15 @@ public class SlotDetail extends AppCompatActivity implements AdapterView.OnItemS
         int slotIndex = spSlotNum.getSelectedItemPosition();
 
         DayOfWeek dayOfWeek = dayOfWeeks[dayIndex];
-        SlotNum slotNum = slotNums[slotIndex];
+        int slotNum = slotNums[slotIndex];
 
         String subject = ((EditText) findViewById(R.id.txtSubject)).getText().toString();
         String location = ((EditText) findViewById(R.id.txtLocation)).getText().toString();
-
+        String note = ((EditText) findViewById(R.id.txtNote)).getText().toString();
         boolean isActive = ((Switch) findViewById(R.id.activeStatus)).isActivated();
 
-        DetailModel detailModel = new DetailModel(dayOfWeek, slotNum, subject, location, isActive);
-
-        SharedPreferences sharedPreferences =
-                getSharedPreferences("butchjgo.com.finalproject", MODE_PRIVATE);
-
-        String stData = gson.toJson(detailModel);
-        sharedPreferences.edit().putString(dayOfWeek.toString() + slotNum.toString(), stData).apply();
+        DetailModel detail = new DetailModel(dayOfWeek, slotNum, subject, location, note, isActive);
+        repository.save(detail);
     }
 
     void updateView() {
@@ -55,24 +59,24 @@ public class SlotDetail extends AppCompatActivity implements AdapterView.OnItemS
         int slotIndex = spSlotNum.getSelectedItemPosition();
 
         DayOfWeek dayOfWeek = dayOfWeeks[dayIndex];
-        SlotNum slotNum = slotNums[slotIndex];
+        int slotNum = slotNums[slotIndex];
 
-        SharedPreferences sharedPreferences =
-                getSharedPreferences("butchjgo.com.finalproject", MODE_PRIVATE);
-
-        String stData = sharedPreferences.getString(dayOfWeek.toString() + slotNum.toString(), "");
-
+        DetailModel detail = repository.get(dayOfWeek, slotNum);
 
         TextView txtSub = findViewById(R.id.txtSubject);
         TextView txtLoc = findViewById(R.id.txtLocation);
-
-        if (!stData.isEmpty()) {
-            DetailModel detailModel = gson.fromJson(stData, DetailModel.class);
-            txtSub.setText(detailModel.getSubject());
-            txtLoc.setText(detailModel.getLocation());
+        TextView txtNote = findViewById(R.id.txtNote);
+        Switch aSwitch = findViewById(R.id.activeStatus);
+        if (detail != null) {
+            txtSub.setText(detail.getSubject());
+            txtLoc.setText(detail.getLocation());
+            txtNote.setText(detail.getNote());
+            aSwitch.setActivated(detail.isActive());
         } else {
             txtSub.setText("");
             txtLoc.setText("");
+            txtNote.setText("");
+            aSwitch.setActivated(true);
         }
     }
 
@@ -81,6 +85,8 @@ public class SlotDetail extends AppCompatActivity implements AdapterView.OnItemS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slot_detail);
 
+        repository = new DetailRepositoryImpl(this);
+
         spDayOfWeek = (Spinner) findViewById(R.id.spDayOfWeek);
         spSlotNum = findViewById(R.id.spSlotNum);
 
@@ -88,8 +94,8 @@ public class SlotDetail extends AppCompatActivity implements AdapterView.OnItemS
                 new ArrayAdapter<DayOfWeek>
                         (this, android.R.layout.simple_spinner_dropdown_item, dayOfWeeks);
 
-        ArrayAdapter<SlotNum> slotNumArrayAdapter =
-                new ArrayAdapter<SlotNum>
+        ArrayAdapter<Integer> slotNumArrayAdapter =
+                new ArrayAdapter<Integer>
                         (this, android.R.layout.simple_spinner_dropdown_item, slotNums);
 
         dayOfWeekArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -98,29 +104,9 @@ public class SlotDetail extends AppCompatActivity implements AdapterView.OnItemS
         spDayOfWeek.setAdapter(dayOfWeekArrayAdapter);
         spSlotNum.setAdapter(slotNumArrayAdapter);
 
-        spDayOfWeek.setOnItemSelectedListener(this);
-        spSlotNum.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                updateView();
-            }
+        spDayOfWeek.setOnItemSelectedListener(onItemSelectedListener);
+        spSlotNum.setOnItemSelectedListener(onItemSelectedListener);
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
         updateView();
-    }
-
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        updateView();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-        return;
     }
 }

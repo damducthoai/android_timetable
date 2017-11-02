@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/btnOK"
         android:layout_below="@+id/slotNumLabel"
-        android:layout_marginTop="63dp"
+        android:layout_marginTop="29dp"
         android:ems="10"
         android:inputType="text"
         android:paddingLeft="20dp"
@@ -45,9 +45,9 @@
         android:id="@+id/btnOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/activeStatus"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="26dp"
+        android:layout_marginBottom="40dp"
         android:onClick="saveData"
         android:text="Save" />
 
@@ -94,9 +94,29 @@
         android:id="@+id/activeStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnOK"
         android:layout_alignEnd="@+id/btnOK"
-        android:layout_below="@+id/txtLocation"
-        android:layout_marginTop="25dp"
+        android:layout_marginBottom="62dp"
         android:text="Active" />
+
+    <EditText
+        android:id="@+id/txtNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/txtLocation"
+        android:layout_below="@+id/txtLocation"
+        android:layout_marginTop="26dp"
+        android:ems="10"
+        android:inputType="textMultiLine" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtNote"
+        android:layout_alignBottom="@+id/txtNote"
+        android:layout_alignEnd="@+id/textView4"
+        android:text="Note"
+        android:textSize="24sp" />
 
 </RelativeLayout>

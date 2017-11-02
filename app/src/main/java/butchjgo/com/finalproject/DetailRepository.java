@@ -7,7 +7,7 @@ import java.time.DayOfWeek;
  */
 
 public interface DetailRepository {
-    void save(DayOfWeek dayOfWeek, SlotNum slotNum);
+    void save(DetailModel detail);
 
-    String get(DayOfWeek dayOfWeek, SlotNum slotNum);
+    DetailModel get(DayOfWeek dayOfWeek, int slotNum);
 }
