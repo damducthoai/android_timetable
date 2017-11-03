@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.lang.String;
 import java.time.DayOfWeek;
 
 /**
@@ -51,8 +50,6 @@ public class DetailRepositoryImpl extends SQLiteOpenHelper implements DetailRepo
         } else {
             db.update(TBL_NAME, contentValues, CONDITION, new String[]{detail.getDayOfWeek().toString(), String.valueOf(detail.getSlotNum())});
         }
-        //db.close();
-
     }
 
     @Override
@@ -68,7 +65,6 @@ public class DetailRepositoryImpl extends SQLiteOpenHelper implements DetailRepo
             boolean isActive = cursor.getInt(5) == 1 ? true : false;
             detail = new DetailModel(dayOfWeek, slotNum, subjectName, location, note, isActive);
         }
-        //db.close();
         return detail;
     }
 

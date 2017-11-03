@@ -1,9 +1,7 @@
 package butchjgo.com.finalproject;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,12 +10,14 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import java.time.DayOfWeek;
 
 public class SlotDetail extends AppCompatActivity {
 
+    DayOfWeek[] dayOfWeeks = DayOfWeek.values();
+    DetailRepository repository;
+    Integer[] slotNums = {1, 2, 3, 4, 5, 6, 7, 8};
+    Spinner spDayOfWeek, spSlotNum;
     private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -30,14 +30,6 @@ public class SlotDetail extends AppCompatActivity {
         }
     };
 
-    DayOfWeek[] dayOfWeeks = DayOfWeek.values();
-
-    DetailRepository repository;
-
-    Integer[] slotNums = {1, 2, 3, 4, 5, 6, 7, 8};
-
-    Spinner spDayOfWeek, spSlotNum;
-
     void saveData(View view) {
         int dayIndex = spDayOfWeek.getSelectedItemPosition();
         int slotIndex = spSlotNum.getSelectedItemPosition();
@@ -48,8 +40,7 @@ public class SlotDetail extends AppCompatActivity {
         String subject = ((EditText) findViewById(R.id.txtSubject)).getText().toString();
         String location = ((EditText) findViewById(R.id.txtLocation)).getText().toString();
         String note = ((EditText) findViewById(R.id.txtNote)).getText().toString();
-        boolean isActive = ((Switch) findViewById(R.id.activeStatus)).isActivated();
-
+        boolean isActive = ((Switch) findViewById(R.id.activeStatus)).isChecked();
         DetailModel detail = new DetailModel(dayOfWeek, slotNum, subject, location, note, isActive);
         repository.save(detail);
     }
@@ -71,7 +62,7 @@ public class SlotDetail extends AppCompatActivity {
             txtSub.setText(detail.getSubject());
             txtLoc.setText(detail.getLocation());
             txtNote.setText(detail.getNote());
-            aSwitch.setActivated(detail.isActive());
+            aSwitch.setChecked(detail.isActive());
         } else {
             txtSub.setText("");
             txtLoc.setText("");
