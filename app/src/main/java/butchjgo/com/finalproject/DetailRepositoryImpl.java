@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by thoai on 11/1/2017.
@@ -66,6 +68,31 @@ public class DetailRepositoryImpl extends SQLiteOpenHelper implements DetailRepo
             detail = new DetailModel(dayOfWeek, slotNum, subjectName, location, note, isActive);
         }
         return detail;
+    }
+
+    @Override
+    public List<DetailModel> getByDayOfWeek(DayOfWeek dayOfWeek) {
+        List<DetailModel> result = new ArrayList<>();
+        final String quey = String.format("select * from %s where day_of_week = ? and is_active = 1", TBL_NAME);
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(quey, new String[]{dayOfWeek.toString()});
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        if (cursor.getCount() > 0) {
+            do {
+                int slotNum = cursor.getInt(1);
+                String subjectName = cursor.getString(2);
+                String location = cursor.getString(3);
+                String note = cursor.getString(4);
+                boolean isActive = cursor.getInt(5) == 1 ? true : false;
+
+                DetailModel detail = new DetailModel(dayOfWeek, slotNum, subjectName, location, note, isActive);
+
+                result.add(detail);
+            } while (cursor.moveToNext());
+        }
+        return result;
     }
 
     @Override
