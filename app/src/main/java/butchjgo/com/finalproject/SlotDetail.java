@@ -1,5 +1,7 @@
 package butchjgo.com.finalproject;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -18,6 +20,8 @@ public class SlotDetail extends AppCompatActivity {
     DetailRepository repository;
     Integer[] slotNums = {1, 2, 3, 4, 5, 6, 7, 8};
     Spinner spDayOfWeek, spSlotNum;
+    Intent mIntent;
+    boolean shouldClose = false;
     private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -43,9 +47,16 @@ public class SlotDetail extends AppCompatActivity {
         boolean isActive = ((Switch) findViewById(R.id.activeStatus)).isChecked();
         DetailModel detail = new DetailModel(dayOfWeek, slotNum, subject, location, note, isActive);
         repository.save(detail);
+
+        if (shouldClose) {
+            setResult(Activity.RESULT_OK);
+            finish();
+        }
     }
 
     void updateView() {
+
+
         int dayIndex = spDayOfWeek.getSelectedItemPosition();
         int slotIndex = spSlotNum.getSelectedItemPosition();
 
@@ -74,6 +85,7 @@ public class SlotDetail extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Detail");
         setContentView(R.layout.activity_slot_detail);
 
         repository = new DetailRepositoryImpl(this);
@@ -97,6 +109,20 @@ public class SlotDetail extends AppCompatActivity {
 
         spDayOfWeek.setOnItemSelectedListener(onItemSelectedListener);
         spSlotNum.setOnItemSelectedListener(onItemSelectedListener);
+
+        mIntent = getIntent();
+
+        DetailModel mDetail = ((DetailModel) mIntent.getSerializableExtra("item"));
+        shouldClose = mIntent.getBooleanExtra("close", false);
+        if (mDetail != null) {
+            for (int i = 0; i < dayOfWeeks.length; i++) {
+                if (dayOfWeeks[i] == mDetail.getDayOfWeek()) {
+                    spDayOfWeek.setSelection(i);
+                    break;
+                }
+            }
+            spSlotNum.setSelection(mDetail.getSlotNum() - 1);
+        }
 
         updateView();
     }
