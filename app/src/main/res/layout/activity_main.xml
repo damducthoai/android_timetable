@@ -5,4 +5,8 @@
     android:layout_height="match_parent"
     tools:context="butchjgo.com.finalproject.MainActivity">
 
+    <ListView
+        android:id="@+id/listDetail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>
