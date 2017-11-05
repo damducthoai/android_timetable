@@ -120,6 +120,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        prepareData();
+        adapter.notifyDataSetChanged();
+        listView.invalidateViews();
+        listView.refreshDrawableState();
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        prepareData();
+        adapter.notifyDataSetChanged();
+        listView.invalidateViews();
+        listView.refreshDrawableState();
+        super.onResume();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.my_menu, menu);
