@@ -1,16 +1,12 @@
 package butchjgo.com.finalproject;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteException;
 import android.os.Environment;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
 /**
@@ -18,99 +14,55 @@ import java.nio.channels.FileChannel;
  */
 
 public class Utils {
-    public static void copyFile(String srcPath, String desPath) {
-        File src = new File(srcPath);
-        File des = new File(desPath);
-
+    public static void backupDB(Context context, String dbName, String backupName) {
         try {
-            FileChannel srcChannel = new FileInputStream(src).getChannel();
-            FileChannel desChannel = new FileInputStream(des).getChannel();
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
 
-            try {
-                desChannel.transferFrom(srcChannel, 0, srcChannel.size());
+            if (sd.canWrite()) {
+                String currentDBPath = "//data//" + context.getPackageName() + "//databases//" + dbName;
+                String backupDBPath = backupName;
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
 
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            } finally {
-                try {
-                    if (srcChannel != null) {
-                        srcChannel.close();
-                    }
-                    if (desChannel != null) {
-                        desChannel.close();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    Toast.makeText(context, "Backup success", Toast.LENGTH_LONG).show();
                 }
             }
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            Toast.makeText(context, "Backup fail", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
     }
 
-    public static String copyFileFromDataToSDCard(String des, String src) {
-        String result = "Copied files: \n";
-        File sdCard = Environment.getExternalStorageDirectory();
-        String sdPath = sdCard.getAbsolutePath();
-
-        File data = Environment.getDataDirectory();
-
-        File dir = new File(sdPath + "/" + des);
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-
-        //access DB folder
-        File db = new File(data, src);
-        File[] listFile = db.listFiles();
-
-        if (listFile != null) {
-            for (int i = 0; i < listFile.length; i++) {
-                File f = listFile[i];
-                result += f.getName() + "\n";
-                copyFile(f.getAbsolutePath(), dir + "/" + f.getName());
-            }
-        } else {
-            result += "None.\n";
-        }
-        return result;
-    }
-
-    public static boolean checkDB(Context context, String dbName) {
-        boolean result = false;
-
+    public static void restoreDb(Context context, String dbName, String backupName) {
         try {
-            String path = "/data/" + context.getPackageName() + "/databases/" + dbName;
-            File f = new File(path);
-            result = f.exists();
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+
+            if (sd.canRead()) {
+                String currentDBPath = "//data//" + context.getPackageName() + "//databases//" + dbName;
+                String backupDBPath = backupName;
+                File backupDB = new File(data, currentDBPath);
+                File currentDB = new File(sd, backupDBPath);
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                }
+                Toast.makeText(context, "Restore success", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(context, "Restore fail", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
-        return result;
-    }
-
-    public static void copyDBFromAssetToData(String filename, String srcPath, Context context) throws IOException {
-        InputStream is = context.getAssets().open(filename);
-        OutputStream os = new FileOutputStream(srcPath + "/" + filename);
-        copyDB(is, os);
-    }
-
-    private static void copyDB(InputStream is, OutputStream os) throws IOException {
-
-        byte[] buffer = new byte[1024];
-        int length;
-
-        while ((length = is.read(buffer)) > 0) {
-            os.write(buffer, 0, length);
-        }
-
-        os.flush();
-        os.close();
-        is.close();
-    }
-
-    public void copySd2System(String des, String src) {
-        File sdCard = Environment.getExternalStorageDirectory();
-        String sdPath = sdCard.getAbsolutePath();
     }
 }

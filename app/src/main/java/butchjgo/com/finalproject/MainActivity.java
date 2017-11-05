@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     DetailRepository repository = null;
     List<DetailModel> data = null;
     Intent mIntent = null;
-    DayOfWeek dayOfWeek, activeDay = null;
+    DayOfWeek activeDay = null;
     DetailListAdapter adapter;
     ListView listView;
     Spinner spDay;
@@ -110,30 +110,26 @@ public class MainActivity extends AppCompatActivity {
         return;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        prepareData();
+    void updateView() {
         adapter.notifyDataSetChanged();
         listView.invalidateViews();
         listView.refreshDrawableState();
     }
 
-    @Override
-    public void onBackPressed() {
+    void resetView() {
         prepareData();
-        adapter.notifyDataSetChanged();
-        listView.invalidateViews();
-        listView.refreshDrawableState();
-        super.onBackPressed();
+        updateView();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        resetView();
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onResume() {
-        prepareData();
-        adapter.notifyDataSetChanged();
-        listView.invalidateViews();
-        listView.refreshDrawableState();
+        resetView();
         super.onResume();
     }
 
@@ -147,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
+
         switch (item.getItemId()) {
             case R.id.edit:
                 mIntent.putExtra("close", false);
@@ -157,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.restore:
                 repository.restore();
+                resetView();
                 break;
         }
         return true;
