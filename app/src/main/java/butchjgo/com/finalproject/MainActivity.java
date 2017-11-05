@@ -152,7 +152,12 @@ public class MainActivity extends AppCompatActivity {
                 mIntent.putExtra("close", false);
                 MainActivity.this.startActivity(mIntent);
                 break;
-
+            case R.id.backup:
+                repository.backup();
+                break;
+            case R.id.restore:
+                repository.restore();
+                break;
         }
         return true;
     }

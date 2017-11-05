@@ -5,7 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +21,12 @@ import java.util.List;
  */
 
 public class DetailRepositoryImpl extends SQLiteOpenHelper implements DetailRepository {
+
+    private static final String DB_Name_Test = "TestDB.db";
+
+    // url for database
+
+    private static final String PACKAGE_NAME = "butchjgo.com.finalproject";
 
     private static final String DB_NAME = "timetable2";
     private static final String TBL_NAME = "info";
@@ -27,8 +39,17 @@ public class DetailRepositoryImpl extends SQLiteOpenHelper implements DetailRepo
 
     private final String CONDITION = "day_of_week = ? AND slot_num = ?";
 
+    private final String dataPath = "//data//butchjgo.com.finalproject//databases//" + DB_NAME;
+
+    private final String dataPathBackup = "//data//butchjgo.com.finalproject//databases//" + DB_NAME + "_backup";
+
+    private final String folderSD = Environment.getExternalStorageDirectory() + "/myTimeTable";
+
+    Context mContext;
+
     public DetailRepositoryImpl(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+        mContext = context;
     }
 
     @Override
@@ -93,6 +114,71 @@ public class DetailRepositoryImpl extends SQLiteOpenHelper implements DetailRepo
             } while (cursor.moveToNext());
         }
         return result;
+    }
+
+    // create folder if it not exist
+    private void createFolder() {
+        File sd = new File(folderSD);
+        if (!sd.exists()) {
+            sd.mkdir();
+            System.out.println("create folder");
+        } else {
+            System.out.println("exits");
+        }
+    }
+
+    @Override
+    public void backup() {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+
+            if (sd.canWrite()) {
+                String currentDBPath = "//data//" + mContext.getPackageName() + "//databases//" + DB_NAME + "";
+                String backupDBPath = "backupname.db";
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    Toast.makeText(mContext, "Backup success", Toast.LENGTH_LONG).show();
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(mContext, "Backup fail", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void restore() {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+
+            if (sd.canRead()) {
+                String currentDBPath = "//data//" + mContext.getPackageName() + "//databases//" + DB_NAME + "";
+                String backupDBPath = "backupname.db";
+                File backupDB = new File(data, currentDBPath);
+                File currentDB = new File(sd, backupDBPath);
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                }
+                Toast.makeText(mContext, "Restore success", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(mContext, "Restore fail", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
     @Override

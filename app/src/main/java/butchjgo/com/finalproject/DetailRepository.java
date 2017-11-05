@@ -13,4 +13,8 @@ public interface DetailRepository {
     DetailModel get(DayOfWeek dayOfWeek, int slotNum);
 
     List<DetailModel> getByDayOfWeek(DayOfWeek dayOfWeek);
+
+    void backup();
+
+    void restore();
 }

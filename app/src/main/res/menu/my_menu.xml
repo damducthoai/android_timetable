@@ -3,4 +3,10 @@
     <item
         android:id="@+id/edit"
         android:title="Edit" />
+    <item
+        android:id="@+id/backup"
+        android:title="Backup" />
+    <item
+        android:id="@+id/restore"
+        android:title="Restore" />
 </menu>
