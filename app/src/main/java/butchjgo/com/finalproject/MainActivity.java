@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 activeDay = dayOfWeeks[position];
                 prepareData();
+                updateView();
             }
 
             @Override
@@ -146,8 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.edit:
-                mIntent.putExtra("close", false);
-                MainActivity.this.startActivity(mIntent);
+                processAdd();
                 break;
             case R.id.backup:
                 repository.backup();
@@ -158,5 +158,25 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    private void processAdd() {
+        mIntent.putExtra("close", false);
+        MainActivity.this.startActivity(mIntent);
+    }
+
+    public void doAdd(View view) {
+        Spinner spinner = findViewById(R.id.spDay);
+        DayOfWeek dayOfWeek = (DayOfWeek) spinner.getSelectedItem();
+        DetailModel detail;
+
+        if (data != null && data.size() > 0) {
+            int index = data.size() == 8 ? 1 : data.size() + 1;
+            detail = new DetailModel(dayOfWeek, index, "", "", "", true);
+        } else {
+            detail = new DetailModel(dayOfWeek, 1, "", "", "", true);
+        }
+        mIntent.putExtra("item", detail);
+        processAdd();
     }
 }
