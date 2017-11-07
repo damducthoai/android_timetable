@@ -2,11 +2,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/edit"
-        android:title="Edit" />
+        android:title="Edit"
+        android:visible="false" />
     <item
         android:id="@+id/backup"
         android:title="Backup" />
     <item
         android:id="@+id/restore"
         android:title="Restore" />
+
+    <item
+        android:id="@+id/login"
+        android:title="Login" />
+    <item
+        android:id="@+id/backup2Account"
+        android:title="Backtup2Account"
+        android:visible="false" />
+    <item
+        android:id="@+id/restoreFromAccount"
+        android:title="RestoreFromAccount"
+        android:visible="false" />
+    <item
+        android:id="@+id/logout"
+        android:title="Logout"
+        android:visible="false" />
 </menu>

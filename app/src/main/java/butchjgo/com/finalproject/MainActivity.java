@@ -3,6 +3,7 @@ package butchjgo.com.finalproject;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -25,8 +26,8 @@ import java.util.List;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class MainActivity extends AppCompatActivity {
 
+    private static final int LOGIN_CODE = 181;
     DayOfWeek[] dayOfWeeks = DayOfWeek.values();
-
     int curDay;
     DetailRepository repository = null;
     List<DetailModel> data = null;
@@ -124,7 +125,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        resetView();
+        if (requestCode == LOGIN_CODE) {
+            SharedPreferences sharedPreferences = getSharedPreferences("butchjgo.com.finalproject", MODE_PRIVATE);
+            String user = sharedPreferences.getString("user", "");
+            if (!user.isEmpty()) {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        } else {
+            resetView();
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -138,7 +149,28 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.my_menu, menu);
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        SharedPreferences sharedPreferences = getSharedPreferences("butchjgo.com.finalproject", MODE_PRIVATE);
+        String account = sharedPreferences.getString("user", "");
+        if (account.isEmpty()) {
+            menu.findItem(R.id.login).setVisible(true);
+            menu.findItem(R.id.backup2Account).setVisible(false);
+            menu.findItem(R.id.restoreFromAccount).setVisible(false);
+            menu.findItem(R.id.logout).setVisible(false);
+        } else {
+            menu.findItem(R.id.login).setVisible(false);
+            menu.findItem(R.id.backup2Account).setVisible(true);
+            menu.findItem(R.id.restoreFromAccount).setVisible(true);
+            menu.findItem(R.id.logout).setVisible(true);
+        }
+
+        boolean status = super.onPrepareOptionsMenu(menu);
+        return status;
     }
 
     @Override
@@ -155,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.restore:
                 repository.restore();
                 resetView();
+                break;
+            case R.id.login:
+                Intent intent = new Intent(this, Login.class);
+                startActivityForResult(intent, LOGIN_CODE);
                 break;
         }
         return true;
