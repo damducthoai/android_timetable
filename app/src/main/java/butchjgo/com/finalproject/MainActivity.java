@@ -1,7 +1,5 @@
 package butchjgo.com.finalproject;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -20,7 +18,6 @@ import android.widget.Spinner;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Calendar;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -38,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Spinner spDay;
     ArrayAdapter<DayOfWeek> dayOfWeekArrayAdapter;
 
+    //NotificationService notificationService ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,8 +48,11 @@ public class MainActivity extends AppCompatActivity {
         LocalTime.now().getHour();
         mIntent = new Intent(this, SlotDetail.class);
 
+        Intent notificationService = new Intent(this, NotificationService.class);
 
-        Intent notifiCationIn = new Intent(getApplicationContext(), NotificationReceiver.class);
+        startService(notificationService);
+
+        /*Intent notifiCationIn = new Intent(getApplicationContext(), NotificationReceiver.class);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100, notifiCationIn, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         AlarmManager alarmManager = ((AlarmManager) getSystemService(ALARM_SERVICE));
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-
+*/
         spDay = findViewById(R.id.spDay);
         dayOfWeekArrayAdapter =
                 new ArrayAdapter<DayOfWeek>
